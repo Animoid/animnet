@@ -18,6 +18,7 @@ public:
     Dense
   };
   
+  // TODO: move activation to Sheet, not connection
   enum class Activation {
     Tanh
   };

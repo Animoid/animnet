@@ -29,7 +29,7 @@ int main(int argc, char** argv)
   // 0004     32 bit integer  60000            number of images 
   // 0008     32 bit integer  28               number of rows 
   // 0012     32 bit integer  28               number of columns 
-  auto images = readFile("train-images-idx3-ubyte");
+  auto images = readFile("data/mnist/train-images-idx3-ubyte");
   uint magic { stream_uint32(reinterpret_cast<uint8_t*>(&images.data()[0])) };
   assert(magic == 2051);
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   // [offset] [type]          [value]          [description] 
   // 0000     32 bit integer  0x00000801(2049) magic number (MSB first) 
   // 0004     32 bit integer  60000            number of items 
-  auto labels = readFile("train-labels-idx1-ubyte");
+  auto labels = readFile("data/mnist/train-labels-idx1-ubyte");
 
   auto showImage = [=](uint index) {
     uint offset = 16+(width*height*index);
@@ -69,6 +69,8 @@ int main(int argc, char** argv)
   
   network->add(w1);
   network->add(w2);
+  
+  network->forward();
   
   exit(0);
 }

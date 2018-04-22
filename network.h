@@ -17,6 +17,8 @@ public:
   
   void add(ptr<Connection> connection);
   
+  void forward() const;
+  
 protected:
   std::list<ptr<Connection>> connections;
 
