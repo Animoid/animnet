@@ -8,15 +8,15 @@ using namespace Eigen;
 
 using namespace animnet;
 
-Connection::Connection(ptr<Sheet> src, ptr<Sheet> target, 
-                       Type type, Activation activation)
-  : src(src), target(target), type(type), activation(activation)
+Connection::Connection(ptr<Sheet> source, ptr<Sheet> target, 
+                       Type type)
+  : _source(source), _target(target), type(type)
 {
     uint rows;
     uint cols;
     switch (type) {
       case Type::Dense:
-        rows = src->size();
+        rows = source->size();
         cols = target->size();
         break;
       default:
@@ -31,25 +31,26 @@ Connection::~Connection()
   
 }
 
+ptr<Sheet> Connection::source() const
+{
+  return _source;
+}
+
+ptr<Sheet> Connection::target() const
+{
+  return _target;
+}
+
 void Connection::forward() const
 {
-  const auto& sam { src->activations() };
-  auto& tam { target->activations() };
+  const auto& sam { source()->activations() };
+  auto& tam { target()->activations() };
   
   // convert to row vectors
   const Map<const RowVectorXd> sa(sam.data(), sam.size());
   Map<RowVectorXd> ta(tam.data(), tam.size());
  
   // standard ANN layer weight param application
-  auto lin = sa*w + b.transpose();
+  ta = sa*w + b.transpose();
   
-  // followed by element-wise activation function
-  switch (activation) {
-    case Activation::Tanh:
-      ta = tanh(lin.array());
-      break;
-    default:
-      throw std::runtime_error("unimplemented activation function");
-  }
-    
 }

@@ -58,9 +58,9 @@ int main(int argc, char** argv)
   };
   
   
-  auto input = std::make_shared<Sheet>(28,28);//TODO: add activation type (e.g. sigmoid)
-  auto hidden = std::make_shared<Sheet>(100);
-  auto output = std::make_shared<Sheet>(10);
+  auto input = std::make_shared<Sheet>(28,28);
+  auto hidden = std::make_shared<Sheet>(100,1, Sheet::Activation::Tanh);
+  auto output = std::make_shared<Sheet>(10,1);
 
   auto w1 = std::make_shared<Connection>(input, hidden, Connection::Type::Dense);
   auto w2 = std::make_shared<Connection>(hidden, output, Connection::Type::Dense);
@@ -70,6 +70,10 @@ int main(int argc, char** argv)
   network->add(w1);
   network->add(w2);
   
+  // set image as input
+  
+  
+  // classify image
   network->forward();
   
   exit(0);

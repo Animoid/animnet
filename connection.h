@@ -18,23 +18,20 @@ public:
     Dense
   };
   
-  // TODO: move activation to Sheet, not connection
-  enum class Activation {
-    Tanh
-  };
-
-  Connection(ptr<Sheet> src, ptr<Sheet> target, 
-             Type type=Type::Dense, Activation activation=Activation::Tanh);
+  Connection(ptr<Sheet> source, ptr<Sheet> target, 
+             Type type=Type::Dense);
   virtual ~Connection();
+  
+  ptr<Sheet> source() const;
+  ptr<Sheet> target() const;
   
   void forward() const;
   
 protected:
-  ptr<Sheet> src;
-  ptr<Sheet> target;
+  ptr<Sheet> _source;
+  ptr<Sheet> _target;
   
   Type type;
-  Activation activation;
   
   Eigen::MatrixXd w; // weight 
   Eigen::VectorXd b; // bias
