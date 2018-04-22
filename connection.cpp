@@ -22,8 +22,8 @@ Connection::Connection(ptr<Sheet> source, ptr<Sheet> target,
       default:
         throw std::runtime_error("unsupported Type");
     }
-    w.resize(rows,cols);
-    b.resize(cols);
+    w = MatrixXd::Zero(rows,cols);
+    b = VectorXd::Zero(cols);
 }
 
 Connection::~Connection()
@@ -52,5 +52,4 @@ void Connection::forward() const
  
   // standard ANN layer weight param application
   ta = sa*w + b.transpose();
-  
 }

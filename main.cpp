@@ -58,9 +58,9 @@ int main(int argc, char** argv)
   };
   
   
-  auto input = std::make_shared<Sheet>(28,28);
+  auto input = std::make_shared<Sheet>(width,height);
   auto hidden = std::make_shared<Sheet>(100,1, Sheet::Activation::Tanh);
-  auto output = std::make_shared<Sheet>(10,1);
+  auto output = std::make_shared<Sheet>(10,1, Sheet::Activation::Softmax);
 
   auto w1 = std::make_shared<Connection>(input, hidden, Connection::Type::Dense);
   auto w2 = std::make_shared<Connection>(hidden, output, Connection::Type::Dense);
@@ -70,11 +70,25 @@ int main(int argc, char** argv)
   network->add(w1);
   network->add(w2);
   
-  // set image as input
+  auto setInputImage = [=](uint index) {
+    Eigen::MatrixXd& indata { input->activations() };
+    uint offset = 16+(width*height*index);
+    for(uint x=0; x<width; x++)
+      for(uint y=0; y<height; y++) 
+        indata(x,y) = images[offset+x*width+y] / 255.0;    
+  };
   
+  constexpr uint imageIndex = 12;
+
+  showImage(imageIndex);
+  
+  // set image as input
+  setInputImage(imageIndex);
   
   // classify image
   network->forward();
+  
+  std::cout << "Classifier:\n" << output->activations() << std::endl;
   
   exit(0);
 }

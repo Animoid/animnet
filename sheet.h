@@ -14,7 +14,8 @@ class Sheet
 public:
   enum class Activation {
     Identity,
-    Tanh
+    Tanh,
+    Softmax
   };
 
   Sheet(uint rows, uint cols, Activation activation = Activation::Identity);

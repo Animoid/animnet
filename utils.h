@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <memory>
+#include <iostream>
 
 namespace animnet {
 

@@ -37,8 +37,13 @@ void Sheet::activate()
     case Activation::Identity: 
       break;
     case Activation::Tanh:
-      a = tanh(a.array());
+      a = a.array().tanh();
       break;
+    case Activation::Softmax: {
+      auto exps = a.array().exp();
+      auto sum = exps.sum();
+      a = exps / sum;
+    } break;
     default:
       throw std::runtime_error("unimplemented activation function");
   }
