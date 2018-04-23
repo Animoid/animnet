@@ -15,13 +15,16 @@ public:
   enum class Activation {
     Identity,
     Tanh,
+    ReLU,
     Softmax
   };
 
-  Sheet(uint rows, uint cols, Activation activation = Activation::Identity);
+  Sheet(Eigen::Index rows, Eigen::Index cols, Activation activation = Activation::Identity);
   virtual ~Sheet();
     
-  uint size() const;
+  Eigen::Index rows() const;
+  Eigen::Index cols() const;
+  Eigen::Index size() const;
   
   void activate();
   

@@ -4,7 +4,7 @@ using namespace Eigen;
 
 using namespace animnet;
 
-Sheet::Sheet(uint rows, uint cols, Activation activation)
+Sheet::Sheet(Index rows, Index cols, Activation activation)
   : a(rows,cols), activation(activation)
 {
   
@@ -15,10 +15,21 @@ Sheet::~Sheet()
   
 }
 
-uint Sheet::size() const
+Index Sheet::size() const
 {
   return a.rows()*a.cols();
 }
+
+Index Sheet::rows() const
+{
+  return a.rows();
+}
+
+Index Sheet::cols() const
+{
+  return a.cols();
+}
+
 
 const MatrixXd& Sheet::activations() const
 {
@@ -38,6 +49,9 @@ void Sheet::activate()
       break;
     case Activation::Tanh:
       a = a.array().tanh();
+      break;
+    case Activation::ReLU:
+      a = a.unaryExpr(std::ptr_fun(&relu));
       break;
     case Activation::Softmax: {
       auto exps = a.array().exp();

@@ -15,7 +15,8 @@ class Connection
 public:
 
   enum class Type {
-    Dense
+    Dense,
+    Convolution
   };
   
   Connection(ptr<Sheet> source, ptr<Sheet> target, 
@@ -24,6 +25,8 @@ public:
   
   ptr<Sheet> source() const;
   ptr<Sheet> target() const;
+  
+  void setConvolutionParams(Eigen::Index width, Eigen::Index height, std::string padding="valid");
   
   void forward() const;
   

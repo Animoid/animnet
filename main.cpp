@@ -57,17 +57,28 @@ int main(int argc, char** argv)
     std::cout << "label:" << std::to_string(int(labels[8+index])) << std::endl;
   };
   
+  // Architecture
+  // 1. Convolutional Layer #1: Applies 32 5x5 filters (extracting 5x5-pixel subregions), with ReLU activation function
+  // 2. Pooling Layer #1: Performs max pooling with a 2x2 filter and stride of 2 (which specifies that pooled regions do not overlap)
+  // 3. Convolutional Layer #2: Applies 64 5x5 filters, with ReLU activation function
+  // 4. Pooling Layer #2: Again, performs max pooling with a 2x2 filter and stride of 2
+  // 5. Dense Layer #1: 1,024 neurons, with dropout regularization rate of 0.4 (probability of 0.4 that any given element will be dropped during training)
+  // 6. Dense Layer #2 (Logits Layer): 10 neurons, one for each digit target class (0–9).
+  
   
   auto input = std::make_shared<Sheet>(width,height);
-  auto hidden = std::make_shared<Sheet>(100,1, Sheet::Activation::Tanh);
+  
+  auto conv1 = std::make_shared<Sheet>(24,24, Sheet::Activation::ReLU);
+  auto wconv1 = std::make_shared<Connection>(input, conv1, Connection::Type::Convolution);
+  wconv1->setConvolutionParams(5,5, "valid"); // TODO: switch to same
+
   auto output = std::make_shared<Sheet>(10,1, Sheet::Activation::Softmax);
 
-  auto w1 = std::make_shared<Connection>(input, hidden, Connection::Type::Dense);
-  auto w2 = std::make_shared<Connection>(hidden, output, Connection::Type::Dense);
+  auto w2 = std::make_shared<Connection>(conv1, output, Connection::Type::Dense);
 
   auto network = std::make_shared<Network>();
   
-  network->add(w1);
+  network->add(wconv1);
   network->add(w2);
   
   auto setInputImage = [=](uint index) {
