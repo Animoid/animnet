@@ -92,10 +92,21 @@ void Connection::forward() const
     assert(tw == sw - kw + 1);
     assert(th == sh - kh + 1);
     
-    for(Index y=0; y<sh - kh + 1; y++) {
-      for(Index x=0; x<sw - kw + 1; x++) {
-        
+    const auto& s { source()->activations() };
+    auto& t { target()->activations() };
+
+    // scan kernel over source, without overhang (valid padding)
+    // (kernel centered at x,y in source)
+    Index padw = (kw-1)/2;
+    Index padh = (kh-1)/2;
+    for(Index y=padh; y<sh - padh; y++) {
+      for(Index x=padw; x<sw - padw; x++) {
+        // pick out kerel shaped block from source
+        auto csrc { s.block(x-padw, y-padh, kw, kh) };
+        // element-wise multiply with kernel & sum to scalar
+        t(x-padw, y-padh) = (csrc.array() * w.array()).sum();
       }
     }
-  }
+    
+  } // convolution
 }
