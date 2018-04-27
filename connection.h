@@ -26,7 +26,13 @@ public:
   ptr<Sheet> source() const;
   ptr<Sheet> target() const;
   
-  void setConvolutionParams(Eigen::Index width, Eigen::Index height, std::string padding="valid");
+  Eigen::MatrixXd& weight();
+  const Eigen::MatrixXd& weight() const;
+  
+  Eigen::VectorXd& bias();
+  const Eigen::VectorXd& bias() const;
+  
+  void setConvolutionParams(Eigen::Index width, Eigen::Index height, uint numFilters=1, std::string padding="valid");
   
   void forward() const;
   

@@ -50,6 +50,9 @@ void Sheet::activate()
     case Activation::Tanh:
       a = a.array().tanh();
       break;
+    case Activation::Logistic:
+      a = a.unaryExpr(std::ptr_fun(&logistic));
+      break;
     case Activation::ReLU:
       a = a.unaryExpr(std::ptr_fun(&relu));
       break;

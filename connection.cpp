@@ -34,9 +34,10 @@ Connection::~Connection()
   
 }
 
-void Connection::setConvolutionParams(Index width, Index height, std::string padding)
+void Connection::setConvolutionParams(Index width, Index height, uint numFilters, std::string padding)
 {
   assert(type == Type::Convolution);
+  assert(numFilters == 1); // only 1 supported for now
   
   if (padding != "valid")
     throw std::runtime_error("only valid padding supported"); // TODO: support "same" (cf TensorFlow)
@@ -66,6 +67,24 @@ ptr<Sheet> Connection::source() const
 ptr<Sheet> Connection::target() const
 {
   return _target;
+}
+
+Eigen::MatrixXd& Connection::weight()
+{
+  return w;
+}
+const Eigen::MatrixXd& Connection::weight() const
+{
+  return w;
+}
+  
+Eigen::VectorXd& Connection::bias()
+{
+  return b;
+}
+const Eigen::VectorXd& Connection::bias() const
+{
+  return b;
 }
 
 void Connection::forward() const
@@ -101,7 +120,7 @@ void Connection::forward() const
     Index padh = (kh-1)/2;
     for(Index y=padh; y<sh - padh; y++) {
       for(Index x=padw; x<sw - padw; x++) {
-        // pick out kerel shaped block from source
+        // pick out kernel shaped block from source
         auto csrc { s.block(x-padw, y-padh, kw, kh) };
         // element-wise multiply with kernel & sum to scalar
         t(x-padw, y-padh) = (csrc.array() * w.array()).sum();

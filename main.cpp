@@ -11,8 +11,53 @@
 
 using namespace animnet;
 
+
+void backpropTest()
+{
+  // simple test network
+  //  see - https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+  auto input = std::make_shared<Sheet>(2,1);
+  input->activations() << 0.05, 0.1;
+  
+  auto hidden  = std::make_shared<Sheet>(2,1, Sheet::Activation::Logistic);
+  auto w1 = std::make_shared<Connection>(input, hidden, Connection::Type::Dense);
+  //w1->weight() << 0.15, 0.2, 0.25, 0.3;
+  w1->weight() << 0.15, 0.25, 0.2, 0.3;
+  w1->bias() << 0.35, 0.35; // FIXME: 2 or 1?
+
+  auto output = std::make_shared<Sheet>(2,1, Sheet::Activation::Logistic);
+  auto w2 = std::make_shared<Connection>(hidden, output, Connection::Type::Dense);
+  //w2->weight() << 0.40, 0.45, 0.5, 0.55;
+  w2->weight() << 0.40, 0.5, 0.45, 0.55;
+  w2->bias() << 0.6, 0.6; // FIXME: 2 or 1?
+
+  auto network = std::make_shared<Network>();
+  
+  network->add(w1);
+  network->add(w2);
+
+  network->forward();
+  
+  auto yhat = output->activations();
+  //std::cout << "Hidden:\n" << hidden->activations() << std::endl;
+  std::cout << "Output:\n" << yhat << std::endl;
+  
+  Eigen::MatrixXd y(2,1);
+  y << 0.01, 0.99;
+  
+  auto error = (y-yhat).array().square().sum()/2.0;
+  std::cout << "error=" << error << std::endl;
+}
+
+
+
 int main(int argc, char** argv)
 {
+  backpropTest();
+  exit(0);
+  //..........
+  
+  
   auto readFile = [](auto name) -> auto {
     std::ifstream ifs(name, std::ios::binary);
     return std::string( (std::istreambuf_iterator<char>(ifs) ),
@@ -70,7 +115,7 @@ int main(int argc, char** argv)
   
   auto conv1 = std::make_shared<Sheet>(24,24, Sheet::Activation::ReLU);
   auto wconv1 = std::make_shared<Connection>(input, conv1, Connection::Type::Convolution);
-  wconv1->setConvolutionParams(5,5, "valid"); // TODO: switch to same
+  wconv1->setConvolutionParams(5,5, 1, "valid"); // TODO: switch to 32, same
 
   auto output = std::make_shared<Sheet>(10,1, Sheet::Activation::Softmax);
 

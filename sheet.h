@@ -15,6 +15,7 @@ public:
   enum class Activation {
     Identity,
     Tanh,
+    Logistic,
     ReLU,
     Softmax
   };
